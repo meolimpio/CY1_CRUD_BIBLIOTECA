@@ -1,4 +1,4 @@
-# CY1_CRUD_BIBLIOTECA — Versão aperfeiçoada
+# CY1_CRUD_BIBLIOTECA
 
 CRUD de biblioteca desenvolvido em Django, Python, HTML, CSS autoral e JavaScript puro.
 
@@ -13,7 +13,6 @@ CRUD de biblioteca desenvolvido em Django, Python, HTML, CSS autoral e JavaScrip
 - Upload opcional de capa
 - Histórico geral de movimentações
 - Histórico por livro na tela de detalhes
-- Layout responsivo, acessível e baseado na paleta: `#948D9B`, `#B279A7`, `#D387AB`, `#E899DC`
 
 ## Como rodar
 
