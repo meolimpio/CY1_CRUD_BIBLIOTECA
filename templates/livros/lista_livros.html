@@ -1,0 +1,135 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}Acervo | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="cabecalho-pagina">
+    <div>
+        <p class="pre-titulo">Gerenciamento de acervo</p>
+        <h1>Livros cadastrados</h1>
+        <p class="texto-suave">Consulte, filtre e gerencie os livros registrados na biblioteca.</p>
+    </div>
+    <a href="{% url 'cadastrar_livro' %}" class="btn btn-primario">Cadastrar novo livro</a>
+</section>
+
+<section class="grid-resumo" aria-label="Resumo do acervo">
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Total no acervo</span>
+        <strong>{{ total_livros }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Disponíveis</span>
+        <strong>{{ total_disponiveis }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Emprestados</span>
+        <strong>{{ total_emprestados }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Reservados</span>
+        <strong>{{ total_reservados }}</strong>
+    </article>
+</section>
+
+<section class="painel-filtros" aria-labelledby="titulo-filtros">
+    <div class="painel-titulo">
+        <h2 id="titulo-filtros">Busca e filtros</h2>
+        <p>Use os campos abaixo para localizar livros por título, autor, editora, categoria ou status.</p>
+    </div>
+
+    <form method="get" class="form-filtros">
+        <div class="grupo-campo campo-busca">
+            <label for="campo-busca-livro">Buscar livro</label>
+            <input
+                id="campo-busca-livro"
+                class="campo-formulario"
+                type="search"
+                name="q"
+                value="{{ termo_busca }}"
+                placeholder="Título, autor, editora ou categoria"
+            >
+        </div>
+
+        <div class="grupo-campo">
+            <label for="filtro-status">Filtrar por status</label>
+            <select id="filtro-status" class="campo-formulario" name="status" data-auto-submit="true">
+                <option value="">Todos</option>
+                {% for valor, nome in status_choices %}
+                <option value="{{ valor }}" {% if status_selecionado == valor %}selected{% endif %}>{{ nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="acoes-filtro">
+            <button type="submit" class="btn btn-secundario">Aplicar</button>
+            <a href="{% url 'lista_livros' %}" class="btn btn-outline">Limpar</a>
+        </div>
+    </form>
+</section>
+
+<section class="painel-listagem" aria-labelledby="titulo-listagem">
+    <div class="painel-titulo linha-titulo">
+        <div>
+            <h2 id="titulo-listagem">Resultado da listagem</h2>
+            <p>{{ livros|length }} livro(s) encontrado(s).</p>
+        </div>
+    </div>
+
+    {% if livros %}
+    <div class="tabela-responsiva">
+        <table class="tabela-livros">
+            <caption class="sr-only">Tabela com livros cadastrados na biblioteca</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Capa</th>
+                    <th scope="col">Livro</th>
+                    <th scope="col">Editora</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Exemplares</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for livro in livros %}
+                <tr>
+                    <td data-label="Código">#{{ livro.id }}</td>
+                    <td data-label="Capa">
+                        {% if livro.capa %}
+                        <img src="{{ livro.capa.url }}" alt="Capa do livro {{ livro.titulo }}" class="mini-capa">
+                        {% else %}
+                        <div class="mini-capa sem-capa">Sem capa cadastrada</div>
+                        {% endif %}
+                    </td>
+                    <td data-label="Livro">
+                        <strong>{{ livro.titulo }}</strong>
+                        <span class="texto-tabela">{{ livro.autor }}</span>
+                    </td>
+                    <td data-label="Editora">{{ livro.editora }}</td>
+                    <td data-label="Categoria">{{ livro.categoria }}</td>
+                    <td data-label="Exemplares">{{ livro.quantidade_exemplares }}</td>
+                    <td data-label="Status">
+                        <span class="badge badge-{{ livro.status }}">{{ livro.get_status_display }}</span>
+                    </td>
+                    <td data-label="Ações">
+                        <div class="acoes-tabela">
+                            <a href="{% url 'detalhe_livro' livro.id %}" class="btn btn-mini btn-outline">Ver</a>
+                            <a href="{% url 'editar_livro' livro.id %}" class="btn btn-mini btn-secundario">Editar</a>
+                            <a href="{% url 'excluir_livro' livro.id %}" class="btn btn-mini btn-perigo">Excluir</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <article class="estado-vazio">
+        <h3>Nenhum livro encontrado</h3>
+        <p>Cadastre um novo livro ou ajuste os filtros aplicados na busca.</p>
+        <a href="{% url 'cadastrar_livro' %}" class="btn btn-primario">Cadastrar primeiro livro</a>
+    </article>
+    {% endif %}
+</section>
+{% endblock %}

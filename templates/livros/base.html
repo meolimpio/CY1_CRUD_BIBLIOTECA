@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de cadastro e gerenciamento de livros de uma biblioteca digital.">
+    <title>{% block title %}Biblioteca Digital{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo principal</a>
+
+    {% if user.is_authenticated %}
+    <header class="topo-site">
+        <nav class="navbar" aria-label="Navegação principal">
+            <a class="navbar-brand" href="{% url 'lista_livros' %}" aria-label="Ir para a página inicial da Biblioteca Digital">
+                <span class="brand-icone" aria-hidden="true">BD</span>
+                <span>Biblioteca Digital</span>
+            </a>
+
+            <button class="navbar-toggle" type="button" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu-principal">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
+
+            <div class="navbar-menu" id="menu-principal">
+                <a href="{% url 'lista_livros' %}" class="nav-link {% if request.resolver_match.url_name == 'lista_livros' %}ativo{% endif %}">Acervo</a>
+                <a href="{% url 'cadastrar_livro' %}" class="nav-link {% if request.resolver_match.url_name == 'cadastrar_livro' %}ativo{% endif %}">Novo livro</a>
+                <a href="{% url 'historico_movimentacoes' %}" class="nav-link {% if request.resolver_match.url_name == 'historico_movimentacoes' %}ativo{% endif %}">Histórico</a>
+            </div>
+
+            <div class="usuario-navbar" aria-label="Informações do usuário">
+                <span class="usuario-nome">{{ user.get_username }}</span>
+                <a href="{% url 'logout' %}" class="btn btn-outline btn-pequeno">Sair</a>
+            </div>
+        </nav>
+    </header>
+    {% endif %}
+
+    <main id="conteudo-principal" class="conteudo-principal" tabindex="-1">
+        {% if messages %}
+        <section class="mensagens" aria-label="Mensagens do sistema" aria-live="polite">
+            {% for message in messages %}
+            <article class="mensagem mensagem-{{ message.tags|default:'info' }}" role="alert">
+                <span>{{ message }}</span>
+                <button class="mensagem-fechar" type="button" aria-label="Fechar mensagem">×</button>
+            </article>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {% if user.is_authenticated %}
+    <footer class="rodape-site">
+        <p>Biblioteca Digital — Projeto Final CY1.</p>
+    </footer>
+    {% endif %}
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

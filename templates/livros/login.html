@@ -1,0 +1,43 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}Login | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="login-wrapper" aria-labelledby="titulo-login">
+    <div class="login-card">
+        <div class="login-apresentacao">
+            <span class="login-selo" aria-hidden="true">BD</span>
+            <h1 id="titulo-login">Biblioteca Digital</h1>
+            <p>Acervo digital.</p>
+        </div>
+
+        <form method="post" class="formulario login-form" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="erro-formulario" role="alert">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="grupo-campo">
+                <label for="{{ form.username.id_for_label }}">Usuário</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="erro-campo">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.password.id_for_label }}">Senha</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="erro-campo">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primario btn-bloco">Entrar</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

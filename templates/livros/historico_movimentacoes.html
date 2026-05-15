@@ -1,0 +1,83 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}Histórico | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="cabecalho-pagina">
+    <div>
+        <p class="pre-titulo">Rastreabilidade</p>
+        <h1>Histórico de movimentações</h1>
+        <p class="texto-suave">Acompanhe as ações realizadas no acervo da biblioteca.</p>
+    </div>
+    <a href="{% url 'lista_livros' %}" class="btn btn-outline">Voltar ao acervo</a>
+</section>
+
+<section class="painel-filtros" aria-labelledby="titulo-filtro-historico">
+    <div class="painel-titulo">
+        <h2 id="titulo-filtro-historico">Filtrar histórico</h2>
+        <p>Filtre as movimentações por tipo de ação registrada no sistema.</p>
+    </div>
+
+    <form method="get" class="form-filtros historico-filtro">
+        <div class="grupo-campo">
+            <label for="filtro-tipo">Tipo de movimentação</label>
+            <select id="filtro-tipo" name="tipo" class="campo-formulario" data-auto-submit="true">
+                <option value="">Todos</option>
+                {% for valor, nome in tipo_choices %}
+                <option value="{{ valor }}" {% if tipo_selecionado == valor %}selected{% endif %}>{{ nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="acoes-filtro">
+            <button class="btn btn-secundario" type="submit">Aplicar</button>
+            <a class="btn btn-outline" href="{% url 'historico_movimentacoes' %}">Limpar</a>
+        </div>
+    </form>
+</section>
+
+<section class="painel-listagem" aria-labelledby="titulo-lista-historico">
+    <div class="painel-titulo">
+        <h2 id="titulo-lista-historico">Registros encontrados</h2>
+        <p>{{ movimentacoes|length }} movimentação(ões) registrada(s).</p>
+    </div>
+
+    {% if movimentacoes %}
+    <div class="tabela-responsiva">
+        <table class="tabela-livros tabela-historico">
+            <caption class="sr-only">Tabela com histórico de movimentações de livros</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Livro</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Usuário</th>
+                    <th scope="col">Descrição</th>
+                    <th scope="col">Data e horário</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in movimentacoes %}
+                <tr>
+                    <td data-label="Livro">
+                        {% if item.livro %}
+                        <a href="{% url 'detalhe_livro' item.livro.id %}" class="link-tabela">{{ item.titulo_livro }}</a>
+                        {% else %}
+                        {{ item.titulo_livro }} <span class="texto-tabela">registro excluído</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Tipo"><span class="badge badge-historico">{{ item.get_tipo_movimentacao_display }}</span></td>
+                    <td data-label="Usuário">{% if item.usuario %}{{ item.usuario.get_username }}{% else %}Usuário removido{% endif %}</td>
+                    <td data-label="Descrição">{{ item.descricao }}</td>
+                    <td data-label="Data e horário">{{ item.data_movimentacao|date:'d/m/Y H:i' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <article class="estado-vazio compacto">
+        <h3>Nenhuma movimentação encontrada</h3>
+        <p>As ações feitas no acervo aparecerão nesta página.</p>
+    </article>
+    {% endif %}
+</section>
+{% endblock %}

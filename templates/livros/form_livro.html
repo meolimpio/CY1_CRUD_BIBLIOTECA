@@ -1,0 +1,88 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}{{ titulo_pagina }} | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="cabecalho-pagina">
+    <div>
+        <p class="pre-titulo">Formulário do acervo</p>
+        <h1>{{ titulo_pagina }}</h1>
+        <p class="texto-suave">{{ subtitulo_pagina }}</p>
+    </div>
+    <a href="{% url 'lista_livros' %}" class="btn btn-outline">Voltar ao acervo</a>
+</section>
+
+<section class="form-card" aria-labelledby="titulo-formulario-livro">
+    <div class="painel-titulo">
+        <h2 id="titulo-formulario-livro">Dados do livro</h2>
+        <p>Os campos marcados no formulário devem ser preenchidos com atenção. O código do livro é gerado automaticamente pelo Django.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="formulario formulario-livro" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="erro-formulario" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="grid-formulario">
+            <div class="grupo-campo campo-span-2">
+                <label for="{{ form.titulo.id_for_label }}">{{ form.titulo.label }}</label>
+                {{ form.titulo }}
+                {% if form.titulo.errors %}<div class="erro-campo">{{ form.titulo.errors }}</div>{% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.autor.id_for_label }}">{{ form.autor.label }}</label>
+                {{ form.autor }}
+                {% if form.autor.errors %}<div class="erro-campo">{{ form.autor.errors }}</div>{% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.editora.id_for_label }}">{{ form.editora.label }}</label>
+                {{ form.editora }}
+                {% if form.editora.errors %}<div class="erro-campo">{{ form.editora.errors }}</div>{% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
+                {{ form.categoria }}
+                {% if form.categoria.errors %}<div class="erro-campo">{{ form.categoria.errors }}</div>{% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.quantidade_exemplares.id_for_label }}">{{ form.quantidade_exemplares.label }}</label>
+                {{ form.quantidade_exemplares }}
+                {% if form.quantidade_exemplares.errors %}<div class="erro-campo">{{ form.quantidade_exemplares.errors }}</div>{% endif %}
+            </div>
+
+            <div class="grupo-campo">
+                <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                {{ form.status }}
+                {% if form.status.errors %}<div class="erro-campo">{{ form.status.errors }}</div>{% endif %}
+            </div>
+
+            <div class="grupo-campo campo-span-2 upload-area">
+                <label for="{{ form.capa.id_for_label }}">{{ form.capa.label }}</label>
+                {{ form.capa }}
+                {% if form.capa.help_text %}<p class="ajuda-campo">{{ form.capa.help_text }}</p>{% endif %}
+                {% if form.capa.errors %}<div class="erro-campo">{{ form.capa.errors }}</div>{% endif %}
+
+                <div class="preview-capa" aria-live="polite">
+                    {% if livro and livro.capa %}
+                    <img src="{{ livro.capa.url }}" alt="Capa atual do livro {{ livro.titulo }}" data-preview-image>
+                    {% else %}
+                    <div class="preview-placeholder" data-preview-placeholder>Pré-visualização da capa</div>
+                    <img src="" alt="Pré-visualização da capa selecionada" data-preview-image hidden>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="acoes-formulario">
+            <button type="submit" class="btn btn-primario">{{ texto_botao }}</button>
+            <a href="{% url 'lista_livros' %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

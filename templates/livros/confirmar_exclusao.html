@@ -1,0 +1,22 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}Excluir livro | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="confirmacao-wrapper" aria-labelledby="titulo-exclusao">
+    <article class="confirmacao-card">
+        <span class="alerta-icone" aria-hidden="true">!</span>
+        <h1 id="titulo-exclusao">Confirmar exclusão</h1>
+        <p>Você está prestes a excluir o livro <strong>{{ livro.titulo }}</strong> do acervo.</p>
+        <p class="texto-suave">Antes da exclusão, uma movimentação será registrada no histórico com o título do livro e o usuário responsável.</p>
+
+        <form method="post" data-confirm-delete="true">
+            {% csrf_token %}
+            <div class="acoes-formulario centralizadas">
+                <button type="submit" class="btn btn-perigo">Sim, excluir livro</button>
+                <a href="{% url 'detalhe_livro' livro.id %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </article>
+</section>
+{% endblock %}

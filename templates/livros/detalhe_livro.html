@@ -1,0 +1,97 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}{{ livro.titulo }} | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="cabecalho-pagina">
+    <div>
+        <p class="pre-titulo">Detalhes do acervo</p>
+        <h1>{{ livro.titulo }}</h1>
+        <p class="texto-suave">Código do livro: #{{ livro.id }}</p>
+    </div>
+    <div class="grupo-botoes">
+        <a href="{% url 'editar_livro' livro.id %}" class="btn btn-secundario">Editar</a>
+        <a href="{% url 'excluir_livro' livro.id %}" class="btn btn-perigo">Excluir</a>
+        <a href="{% url 'lista_livros' %}" class="btn btn-outline">Voltar</a>
+    </div>
+</section>
+
+<section class="detalhe-grid">
+    <article class="card-capa-detalhe" aria-label="Capa do livro">
+        {% if livro.capa %}
+        <img src="{{ livro.capa.url }}" alt="Capa do livro {{ livro.titulo }}">
+        {% else %}
+        <div class="capa-grande sem-capa">Sem capa cadastrada</div>
+        {% endif %}
+    </article>
+
+    <article class="card-detalhes" aria-labelledby="titulo-dados-livro">
+        <h2 id="titulo-dados-livro">Informações do livro</h2>
+        <dl class="lista-detalhes">
+            <div>
+                <dt>Código do livro</dt>
+                <dd>#{{ livro.id }}</dd>
+            </div>
+            <div>
+                <dt>Título</dt>
+                <dd>{{ livro.titulo }}</dd>
+            </div>
+            <div>
+                <dt>Autor</dt>
+                <dd>{{ livro.autor }}</dd>
+            </div>
+            <div>
+                <dt>Editora</dt>
+                <dd>{{ livro.editora }}</dd>
+            </div>
+            <div>
+                <dt>Gênero/Categoria</dt>
+                <dd>{{ livro.categoria }}</dd>
+            </div>
+            <div>
+                <dt>Quantidade de exemplares</dt>
+                <dd>{{ livro.quantidade_exemplares }}</dd>
+            </div>
+            <div>
+                <dt>Status</dt>
+                <dd><span class="badge badge-{{ livro.status }}">{{ livro.get_status_display }}</span></dd>
+            </div>
+            <div>
+                <dt>Cadastrado em</dt>
+                <dd>{{ livro.data_cadastro|date:'d/m/Y H:i' }}</dd>
+            </div>
+        </dl>
+    </article>
+</section>
+
+<section class="painel-listagem" aria-labelledby="titulo-historico-livro">
+    <div class="painel-titulo linha-titulo">
+        <div>
+            <h2 id="titulo-historico-livro">Histórico deste livro</h2>
+            <p>Últimas movimentações vinculadas ao registro selecionado.</p>
+        </div>
+        <a href="{% url 'historico_movimentacoes' %}" class="btn btn-outline btn-pequeno">Ver histórico geral</a>
+    </div>
+
+    {% if historico %}
+    <div class="linha-tempo">
+        {% for item in historico %}
+        <article class="item-historico">
+            <span class="badge badge-historico">{{ item.get_tipo_movimentacao_display }}</span>
+            <h3>{{ item.titulo_livro }}</h3>
+            <p>{{ item.descricao }}</p>
+            <small>
+                {{ item.data_movimentacao|date:'d/m/Y H:i' }} —
+                {% if item.usuario %}{{ item.usuario.get_username }}{% else %}Usuário removido{% endif %}
+            </small>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <article class="estado-vazio compacto">
+        <h3>Nenhuma movimentação registrada</h3>
+        <p>As ações realizadas neste livro aparecerão aqui.</p>
+    </article>
+    {% endif %}
+</section>
+{% endblock %}
