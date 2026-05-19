@@ -1,10 +1,8 @@
 # CY1_CRUD_BIBLIOTECA
 
-CRUD de biblioteca desenvolvido em Django, Python, HTML, CSS autoral e JavaScript puro.
-
 ## Funcionalidades
 
-- Login e logout com autenticação padrão do Django
+- Login e logout com autenticação do Django
 - Cadastro de livros
 - Listagem com busca e filtro por status
 - Visualização de detalhes
