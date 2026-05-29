@@ -51,15 +51,9 @@
             </div>
 
             <div class="grupo-campo">
-                <label for="{{ form.quantidade_exemplares.id_for_label }}">{{ form.quantidade_exemplares.label }}</label>
-                {{ form.quantidade_exemplares }}
-                {% if form.quantidade_exemplares.errors %}<div class="erro-campo">{{ form.quantidade_exemplares.errors }}</div>{% endif %}
-            </div>
-
-            <div class="grupo-campo">
-                <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
-                {{ form.status }}
-                {% if form.status.errors %}<div class="erro-campo">{{ form.status.errors }}</div>{% endif %}
+                <label for="{{ form.quantidade_total.id_for_label }}">{{ form.quantidade_total.label }}</label>
+                {{ form.quantidade_total }}
+                {% if form.quantidade_total.errors %}<div class="erro-campo">{{ form.quantidade_total.errors }}</div>{% endif %}
             </div>
 
             <div class="grupo-campo campo-span-2 upload-area">

@@ -1,0 +1,132 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}Empréstimos | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="cabecalho-pagina">
+    <div>
+        <p class="pre-titulo">Circulação do acervo</p>
+        <h1>Empréstimos</h1>
+        <p class="texto-suave">Registre empréstimos e devoluções com disponibilidade calculada automaticamente.</p>
+    </div>
+    <a href="{% url 'lista_livros' %}" class="btn btn-outline">Voltar ao acervo</a>
+</section>
+
+<section class="grid-resumo" aria-label="Resumo dos empréstimos">
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Exemplares no acervo</span>
+        <strong>{{ total_exemplares }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Disponíveis</span>
+        <strong>{{ total_disponiveis }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Emprestados</span>
+        <strong>{{ total_emprestados }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Reservados</span>
+        <strong>{{ total_reservados }}</strong>
+    </article>
+</section>
+
+<section class="form-card" aria-labelledby="titulo-formulario-emprestimo">
+    <div class="painel-titulo">
+        <h2 id="titulo-formulario-emprestimo">Novo empréstimo</h2>
+        <p>O registro só será aceito quando o livro tiver exemplares disponíveis.</p>
+    </div>
+
+    <form method="post" class="formulario" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="erro-formulario" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="grid-formulario">
+            <div class="grupo-campo">
+                <label for="{{ form.livro.id_for_label }}">{{ form.livro.label }}</label>
+                {{ form.livro }}
+                {% if form.livro.errors %}<div class="erro-campo">{{ form.livro.errors }}</div>{% endif %}
+            </div>
+            <div class="grupo-campo">
+                <label for="{{ form.nome_leitor.id_for_label }}">{{ form.nome_leitor.label }}</label>
+                {{ form.nome_leitor }}
+                {% if form.nome_leitor.errors %}<div class="erro-campo">{{ form.nome_leitor.errors }}</div>{% endif %}
+            </div>
+            <div class="grupo-campo">
+                <label for="{{ form.data_prevista_devolucao.id_for_label }}">{{ form.data_prevista_devolucao.label }}</label>
+                {{ form.data_prevista_devolucao }}
+                {% if form.data_prevista_devolucao.errors %}<div class="erro-campo">{{ form.data_prevista_devolucao.errors }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="acoes-formulario">
+            <button type="submit" class="btn btn-primario">Registrar empréstimo</button>
+        </div>
+    </form>
+</section>
+
+<section class="painel-listagem" aria-labelledby="titulo-lista-emprestimos">
+    <div class="painel-titulo">
+        <h2 id="titulo-lista-emprestimos">Empréstimos registrados</h2>
+        <p>{{ emprestimos|length }} empréstimo(s) encontrado(s).</p>
+    </div>
+
+    {% if emprestimos %}
+    <div class="tabela-responsiva">
+        <table class="tabela-livros">
+            <caption class="sr-only">Tabela com empréstimos registrados</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Livro</th>
+                    <th scope="col">Leitor</th>
+                    <th scope="col">Empréstimo</th>
+                    <th scope="col">Previsão</th>
+                    <th scope="col">Situação</th>
+                    <th scope="col">Responsável</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emprestimo in emprestimos %}
+                <tr>
+                    <td data-label="Livro">
+                        <a href="{% url 'detalhe_livro' emprestimo.livro.id %}" class="link-tabela">{{ emprestimo.livro.titulo }}</a>
+                    </td>
+                    <td data-label="Leitor">{{ emprestimo.nome_leitor }}</td>
+                    <td data-label="Empréstimo">{{ emprestimo.data_emprestimo|date:'d/m/Y' }}</td>
+                    <td data-label="Previsão">{{ emprestimo.data_prevista_devolucao|date:'d/m/Y' }}</td>
+                    <td data-label="Situação">
+                        {% if emprestimo.ativo %}
+                        <span class="badge badge-emprestado">Ativo</span>
+                        {% else %}
+                        <span class="badge badge-disponivel">Devolvido em {{ emprestimo.data_devolucao|date:'d/m/Y' }}</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Responsável">
+                        {% if emprestimo.usuario_responsavel %}{{ emprestimo.usuario_responsavel.get_username }}{% else %}Usuário removido{% endif %}
+                    </td>
+                    <td data-label="Ações">
+                        {% if emprestimo.ativo %}
+                        <form method="post" action="{% url 'devolver_emprestimo' emprestimo.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-mini btn-secundario">Registrar devolução</button>
+                        </form>
+                        {% else %}
+                        <span class="texto-tabela">Sem ações</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <article class="estado-vazio compacto">
+        <h3>Nenhum empréstimo registrado</h3>
+        <p>Os empréstimos criados aparecerão nesta página.</p>
+    </article>
+    {% endif %}
+</section>
+{% endblock %}

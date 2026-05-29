@@ -10,6 +10,8 @@
         <p class="texto-suave">Código do livro: #{{ livro.id }}</p>
     </div>
     <div class="grupo-botoes">
+        <a href="{% url 'listar_emprestimos' %}?livro={{ livro.id }}" class="btn btn-primario">Emprestar</a>
+        <a href="{% url 'listar_reservas' %}?livro={{ livro.id }}" class="btn btn-outline">Reservar</a>
         <a href="{% url 'editar_livro' livro.id %}" class="btn btn-secundario">Editar</a>
         <a href="{% url 'excluir_livro' livro.id %}" class="btn btn-perigo">Excluir</a>
         <a href="{% url 'lista_livros' %}" class="btn btn-outline">Voltar</a>
@@ -49,12 +51,20 @@
                 <dd>{{ livro.categoria }}</dd>
             </div>
             <div>
-                <dt>Quantidade de exemplares</dt>
-                <dd>{{ livro.quantidade_exemplares }}</dd>
+                <dt>Quantidade total</dt>
+                <dd>{{ livro.quantidade_total }}</dd>
             </div>
             <div>
-                <dt>Status</dt>
-                <dd><span class="badge badge-{{ livro.status }}">{{ livro.get_status_display }}</span></dd>
+                <dt>Disponíveis</dt>
+                <dd><span class="badge {% if livro.tem_disponibilidade %}badge-disponivel{% else %}badge-indisponivel{% endif %}">{{ livro.quantidade_disponivel }}</span></dd>
+            </div>
+            <div>
+                <dt>Emprestados</dt>
+                <dd>{{ livro.quantidade_emprestada }}</dd>
+            </div>
+            <div>
+                <dt>Reservados</dt>
+                <dd>{{ livro.quantidade_reservada }}</dd>
             </div>
             <div>
                 <dt>Cadastrado em</dt>
@@ -62,6 +72,51 @@
             </div>
         </dl>
     </article>
+</section>
+
+<section class="painel-listagem" aria-labelledby="titulo-circulacao-livro">
+    <div class="painel-titulo linha-titulo">
+        <div>
+            <h2 id="titulo-circulacao-livro">Circulação ativa</h2>
+            <p>Empréstimos e reservas que entram no cálculo de disponibilidade.</p>
+        </div>
+    </div>
+
+    <div class="duas-colunas">
+        <article class="subpainel">
+            <h3>Empréstimos ativos</h3>
+            {% if emprestimos_ativos %}
+            <div class="linha-tempo">
+                {% for emprestimo in emprestimos_ativos %}
+                <article class="item-historico">
+                    <span class="badge badge-emprestado">Emprestado</span>
+                    <h3>{{ emprestimo.nome_leitor }}</h3>
+                    <p>Previsão de devolução: {{ emprestimo.data_prevista_devolucao|date:'d/m/Y' }}</p>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="texto-suave">Nenhum empréstimo ativo.</p>
+            {% endif %}
+        </article>
+
+        <article class="subpainel">
+            <h3>Reservas ativas</h3>
+            {% if reservas_ativas %}
+            <div class="linha-tempo">
+                {% for reserva in reservas_ativas %}
+                <article class="item-historico">
+                    <span class="badge badge-reservado">Reservado</span>
+                    <h3>{{ reserva.nome_leitor }}</h3>
+                    <p>Reservado em {{ reserva.data_reserva|date:'d/m/Y' }}</p>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="texto-suave">Nenhuma reserva ativa.</p>
+            {% endif %}
+        </article>
+    </div>
 </section>
 
 <section class="painel-listagem" aria-labelledby="titulo-historico-livro">

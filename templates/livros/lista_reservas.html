@@ -1,0 +1,148 @@
+{% extends 'livros/base.html' %}
+
+{% block title %}Reservas | Biblioteca Digital{% endblock %}
+
+{% block content %}
+<section class="cabecalho-pagina">
+    <div>
+        <p class="pre-titulo">Circulação do acervo</p>
+        <h1>Reservas</h1>
+        <p class="texto-suave">Registre e acompanhe reservas consideradas no cálculo de disponibilidade.</p>
+    </div>
+    <a href="{% url 'lista_livros' %}" class="btn btn-outline">Voltar ao acervo</a>
+</section>
+
+<section class="grid-resumo" aria-label="Resumo das reservas">
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Exemplares no acervo</span>
+        <strong>{{ total_exemplares }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Disponíveis</span>
+        <strong>{{ total_disponiveis }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Emprestados</span>
+        <strong>{{ total_emprestados }}</strong>
+    </article>
+    <article class="card-resumo">
+        <span class="rotulo-resumo">Reservados</span>
+        <strong>{{ total_reservados }}</strong>
+    </article>
+</section>
+
+<section class="form-card" aria-labelledby="titulo-formulario-reserva">
+    <div class="painel-titulo">
+        <h2 id="titulo-formulario-reserva">Nova reserva</h2>
+        <p>Reservas ativas reduzem a quantidade disponível do livro até serem atendidas ou canceladas.</p>
+    </div>
+
+    <form method="post" class="formulario" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="erro-formulario" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="grid-formulario">
+            <div class="grupo-campo">
+                <label for="{{ form.livro.id_for_label }}">{{ form.livro.label }}</label>
+                {{ form.livro }}
+                {% if form.livro.errors %}<div class="erro-campo">{{ form.livro.errors }}</div>{% endif %}
+            </div>
+            <div class="grupo-campo">
+                <label for="{{ form.nome_leitor.id_for_label }}">{{ form.nome_leitor.label }}</label>
+                {{ form.nome_leitor }}
+                {% if form.nome_leitor.errors %}<div class="erro-campo">{{ form.nome_leitor.errors }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="acoes-formulario">
+            <button type="submit" class="btn btn-primario">Registrar reserva</button>
+        </div>
+    </form>
+</section>
+
+<section class="painel-filtros" aria-labelledby="titulo-filtro-reservas">
+    <div class="painel-titulo">
+        <h2 id="titulo-filtro-reservas">Filtrar reservas</h2>
+        <p>Use o filtro para visualizar reservas por situação.</p>
+    </div>
+
+    <form method="get" class="form-filtros historico-filtro">
+        <div class="grupo-campo">
+            <label for="filtro-status-reserva">Situação</label>
+            <select id="filtro-status-reserva" name="status" class="campo-formulario" data-auto-submit="true">
+                <option value="">Todas</option>
+                {% for valor, nome in status_choices %}
+                <option value="{{ valor }}" {% if status_selecionado == valor %}selected{% endif %}>{{ nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="acoes-filtro">
+            <button class="btn btn-secundario" type="submit">Aplicar</button>
+            <a class="btn btn-outline" href="{% url 'listar_reservas' %}">Limpar</a>
+        </div>
+    </form>
+</section>
+
+<section class="painel-listagem" aria-labelledby="titulo-lista-reservas">
+    <div class="painel-titulo">
+        <h2 id="titulo-lista-reservas">Reservas registradas</h2>
+        <p>{{ reservas|length }} reserva(s) encontrada(s).</p>
+    </div>
+
+    {% if reservas %}
+    <div class="tabela-responsiva">
+        <table class="tabela-livros">
+            <caption class="sr-only">Tabela com reservas registradas</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Livro</th>
+                    <th scope="col">Leitor</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Situação</th>
+                    <th scope="col">Responsável</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                <tr>
+                    <td data-label="Livro">
+                        <a href="{% url 'detalhe_livro' reserva.livro.id %}" class="link-tabela">{{ reserva.livro.titulo }}</a>
+                    </td>
+                    <td data-label="Leitor">{{ reserva.nome_leitor }}</td>
+                    <td data-label="Data">{{ reserva.data_reserva|date:'d/m/Y' }}</td>
+                    <td data-label="Situação"><span class="badge badge-{{ reserva.status }}">{{ reserva.get_status_display }}</span></td>
+                    <td data-label="Responsável">
+                        {% if reserva.usuario_responsavel %}{{ reserva.usuario_responsavel.get_username }}{% else %}Usuário removido{% endif %}
+                    </td>
+                    <td data-label="Ações">
+                        {% if reserva.ativa %}
+                        <div class="acoes-tabela">
+                            <form method="post" action="{% url 'atualizar_reserva' reserva.id 'atendida' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-mini btn-secundario">Atender</button>
+                            </form>
+                            <form method="post" action="{% url 'atualizar_reserva' reserva.id 'cancelada' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-mini btn-outline">Cancelar</button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <span class="texto-tabela">Sem ações</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <article class="estado-vazio compacto">
+        <h3>Nenhuma reserva registrada</h3>
+        <p>As reservas criadas aparecerão nesta página.</p>
+    </article>
+    {% endif %}
+</section>
+{% endblock %}

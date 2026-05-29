@@ -28,6 +28,8 @@
             <div class="navbar-menu" id="menu-principal">
                 <a href="{% url 'lista_livros' %}" class="nav-link {% if request.resolver_match.url_name == 'lista_livros' %}ativo{% endif %}">Acervo</a>
                 <a href="{% url 'cadastrar_livro' %}" class="nav-link {% if request.resolver_match.url_name == 'cadastrar_livro' %}ativo{% endif %}">Novo livro</a>
+                <a href="{% url 'listar_emprestimos' %}" class="nav-link {% if request.resolver_match.url_name == 'listar_emprestimos' %}ativo{% endif %}">Empréstimos</a>
+                <a href="{% url 'listar_reservas' %}" class="nav-link {% if request.resolver_match.url_name == 'listar_reservas' %}ativo{% endif %}">Reservas</a>
                 <a href="{% url 'historico_movimentacoes' %}" class="nav-link {% if request.resolver_match.url_name == 'historico_movimentacoes' %}ativo{% endif %}">Histórico</a>
             </div>
 

@@ -1,0 +1,25 @@
+{
+  "name": "cy1_crud_biblioteca",
+  "version": "1.0.0",
+  "description": "CRUD de biblioteca desenvolvido em Django, Python, HTML, CSS autoral e JavaScript puro.",
+  "main": "index.js",
+  "scripts": {
+    "format:css": "prettier --write \"static/css/**/*.css\"",
+    "format": "npm run format:css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meolimpio/CY1_CRUD_BIBLIOTECA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/meolimpio/CY1_CRUD_BIBLIOTECA/issues"
+  },
+  "homepage": "https://github.com/meolimpio/CY1_CRUD_BIBLIOTECA#readme",
+  "devDependencies": {
+    "prettier": "^3.8.3"
+  }
+}
