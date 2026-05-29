@@ -1,22 +1,16 @@
 # CY1_CRUD_BIBLIOTECA
 
 CRUD de biblioteca desenvolvido para o projeto final do módulo 1 do CtrlYoung.
-
 ## Funcionalidades
 
 - Login e logout com autenticação do Django
 - Cadastro de livros
-- Listagem com busca
 - Visualização de detalhes
 - Edição de dados 
 - Upload opcional de capa
-- Controle de quantidade total por livro
-- Cálculo automático de exemplares disponíveis
 - Registro de empréstimos e devoluções
 - Registro e acompanhamento de reservas
-- Cards de resumo do acervo, empréstimos e reservas
 - Histórico geral de movimentações
-- Histórico por livro na tela de detalhes
 
 ## Como rodar
 
